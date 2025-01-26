@@ -1,0 +1,39 @@
+#!/bin/bash
+
+# Directory where the AppImage files are located
+appimage_dir="$HOME/bin/appimage"
+
+# Ensure the appimage directory exists
+if [ ! -d "$appimage_dir" ]; then
+  echo "Directory '$appimage_dir' not found!"
+  mkdir -p $appimage_dir
+  echo "Made appimage dir at: $appimage_dir"
+fi
+
+# Loop through each .AppImage file in the appimage directory
+for appimage_file in "$appimage_dir"/*.AppImage; do
+  # Extract the prefix (everything before the version number)
+  prefix=$(basename "$appimage_file" | cut -d "-" -f 1)
+
+  # Create a script for each prefix
+  script_name="$(echo $prefix | tr '[:upper:]' '[:lower:]')"
+
+  # Start writing the shell script
+  echo "#!/bin/bash" > "$script_name"
+  echo "" >> "$script_name"
+  echo "# Select and run the AppImage with prefix: $prefix" >> "$script_name"
+  echo "appimage_file=\$(find $appimage_dir -maxdepth 1 -type f -iname \"${prefix}*.AppImage\" -print -quit)" >> "$script_name"
+  echo "if [ -z \"\$appimage_file\" ]; then" >> "$script_name"
+  echo "  echo \"No AppImage file found with prefix: \$prefix\"" >> "$script_name"
+  echo "  exit 1" >> "$script_name"
+  echo "else" >> "$script_name"
+  echo "  echo \"Found AppImage file: \$appimage_file\"" >> "$script_name"
+  echo "  \"\$appimage_file\"" >> "$script_name"
+  echo "fi" >> "$script_name"
+
+  # Make the newly created script executable
+  chmod +x "$script_name"
+
+  echo "Created script: $script_name"
+done
+
