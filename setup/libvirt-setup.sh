@@ -8,6 +8,14 @@ if [ "$EUID" -ne 0 ]; then
   exit 1
 fi
 
-apt install virt-manager libvirt-daemon-system-sysv  gir1.2-spiceclientglib-2.0  gir1.2-spiceclientgtk-3.0  qemu-utils  virt-viewer  qemu-system-x86 libvirt-daemon-system
+apt install virt-manager \
+    libvirt-daemon-system \
+    libvirt-daemon-system-sysv \
+    gir1.2-spiceclientglib-2.0 \
+    gir1.2-spiceclientgtk-3.0 \
+    qemu-utils \
+    virt-viewer \
+    qemu-system-x86
+
 
 usermod -a -G libvirt "$SUDO_USER"
